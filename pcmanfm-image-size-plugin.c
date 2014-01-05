@@ -29,6 +29,10 @@
 
 FM_DEFINE_MODULE(tab_page_status, image_size)
 
+ExceptionInfo exception;
+Image *image = 0;
+ImageInfo *image_info = 0;
+
 static char * image_size_sel_message(FmFileInfoList *files, gint n_files) {
 	char * buffer;
 	if(n_files>1)
@@ -37,26 +41,32 @@ static char * image_size_sel_message(FmFileInfoList *files, gint n_files) {
 	buffer = g_malloc(64);
 	buffer[0]=0;
 	if(fm_file_info_is_image(fi)) {
-    		ExceptionInfo exception;
-  		Image *image = 0;
-  		ImageInfo *image_info = 0;
-		MagickCoreGenesis(0,MagickFalse);
-		GetExceptionInfo(&exception);
-		image_info=CloneImageInfo((ImageInfo *) NULL);
 		strcpy(image_info->filename, fm_path_display_name(fm_file_info_get_path(fi),0));
 		image = PingImage(image_info, &exception);	
 		if(image!=0)
 			sprintf(buffer, "(%dx%d)", image->columns,image->rows);
 //		else
 //			sprintf(buffer, "%s:%s",exception.reason,exception.description);
-	    	DestroyImageInfo(image_info);
-    		DestroyExceptionInfo(&exception);
-    		MagickCoreTerminus();
 	}
 	return buffer;
 }
 
+static gboolean image_size_init(void) {
+	MagickCoreGenesis(0,MagickFalse);
+	GetExceptionInfo(&exception);
+	image_info=CloneImageInfo((ImageInfo *) NULL);
+	return TRUE;
+}
+
+static void image_size_finalize(void) {
+    	DestroyImageInfo(image_info);
+	DestroyExceptionInfo(&exception);
+	MagickCoreTerminus();
+}
+
 FmTabPageStatusInit fm_module_init_tab_page_status = {
 	.sel_message = image_size_sel_message,
+	.init = image_size_init,
+	.finalize = image_size_finalize,
 };
 
