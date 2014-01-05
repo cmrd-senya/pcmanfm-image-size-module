@@ -25,7 +25,7 @@
 #include <string.h>
 #include <libfm/fm.h>
 #include <magick/api.h>
-#include "pcmanfm-modules.h"
+#include <pcmanfm-modules.h>
 
 FM_DEFINE_MODULE(tab_page_status, image_size)
 
