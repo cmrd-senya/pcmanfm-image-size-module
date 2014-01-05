@@ -42,7 +42,9 @@ static char * image_size_sel_message(FmFileInfoList *files, gint n_files) {
 	buffer = g_malloc(str_size);
 	buffer[0]=0;
 	if(fm_file_info_is_image(fi)) {
-		strncpy(image_info->filename, fm_path_display_name(fm_file_info_get_path(fi),0), MaxTextExtent);
+                char * path_str = fm_path_to_str(fm_file_info_get_path(fi));
+		strncpy(image_info->filename, path_str, MaxTextExtent);
+		g_free(path_str);
 		image = PingImage(image_info, &exception);	
 		if(image!=0)
 			snprintf(buffer, str_size, "(%dx%d)", image->columns,image->rows);
@@ -60,7 +62,7 @@ static gboolean image_size_init(void) {
 }
 
 static void image_size_finalize(void) {
-    	DestroyImageInfo(image_info);
+	DestroyImageInfo(image_info);
 	DestroyExceptionInfo(&exception);
 	MagickCoreTerminus();
 }
