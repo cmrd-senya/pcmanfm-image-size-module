@@ -34,19 +34,20 @@ Image *image = 0;
 ImageInfo *image_info = 0;
 
 static char * image_size_sel_message(FmFileInfoList *files, gint n_files) {
+        const int str_size = 64;
 	char * buffer;
 	if(n_files>1)
 		return 0;
 	FmFileInfo* fi = fm_file_info_list_peek_head(files);
-	buffer = g_malloc(64);
+	buffer = g_malloc(str_size);
 	buffer[0]=0;
 	if(fm_file_info_is_image(fi)) {
-		strcpy(image_info->filename, fm_path_display_name(fm_file_info_get_path(fi),0));
+		strncpy(image_info->filename, fm_path_display_name(fm_file_info_get_path(fi),0), MaxTextExtent);
 		image = PingImage(image_info, &exception);	
 		if(image!=0)
-			sprintf(buffer, "(%dx%d)", image->columns,image->rows);
+			snprintf(buffer, str_size, "(%dx%d)", image->columns,image->rows);
 //		else
-//			sprintf(buffer, "%s:%s",exception.reason,exception.description);
+//			snprintf(buffer, str_size, "%s:%s",exception.reason,exception.description);
 	}
 	return buffer;
 }
