@@ -45,9 +45,10 @@ static char * image_size_sel_message(FmFileInfoList *files, gint n_files) {
                 char * path_str = fm_path_to_str(fm_file_info_get_path(fi));
 		strncpy(image_info->filename, path_str, MaxTextExtent);
 		g_free(path_str);
-		image = PingImage(image_info, &exception);	
+		image = PingImage(image_info, &exception);
 		if(image!=0)
-			snprintf(buffer, str_size, "(%dx%d)", image->columns,image->rows);
+			snprintf(buffer, str_size, "(%dx%d)",
+				(int) image->columns, (int) image->rows);
 //		else
 //			snprintf(buffer, str_size, "%s:%s",exception.reason,exception.description);
 	}
